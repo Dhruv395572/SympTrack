@@ -34,8 +34,15 @@ def chat():
     try:
         msg = request.form["msg"]
         print(msg)
-        # Direct Groq model se reply lo
-        response = chatModel.invoke(prompt.format(input=msg))
+        # Prompt ko messages dict me convert karo
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": msg}
+        ]
+        response = chatModel.invoke({"messages": messages})
+        # Agar response dict hai aur "content" key hai to wahi return karo
+        if isinstance(response, dict) and "content" in response:
+            return str(response["content"])
         return str(response)
     except Exception as e:
         return f"Error: {str(e)}"
