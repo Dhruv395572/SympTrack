@@ -35,9 +35,11 @@ def about():
 def chat():
     try:
         msg = request.form["msg"]
-        input = msg
-        print(input)
+        print(msg)
         response = question_answer_chain.invoke({"input": msg})
+        
+        if isinstance(response, dict) and "answer" in response:
+            return str(response["answer"])
         return str(response)
     except Exception as e:
         return f"Error: {str(e)}"
