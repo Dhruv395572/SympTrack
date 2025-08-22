@@ -8,7 +8,6 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 from langchain_groq import ChatGroq
-from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from src.prompt import system_prompt
@@ -35,23 +34,11 @@ def about():
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     try:
-        from langchain_openai import OpenAIEmbeddings
-        from langchain_pinecone import PineconeVectorStore
-
-        embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-        index_name = "medical-chatbot"
-        docsearch = PineconeVectorStore.from_existing_index(
-            index_name=index_name,
-            embedding=embeddings
-        )
-        retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k":3})
-        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-
         msg = request.form["msg"]
         input = msg
         print(input)
-        response = rag_chain.invoke({"input": msg})
-        return str(response["answer"])
+        response = question_answer_chain.invoke({"input": msg})
+        return str(response)
     except Exception as e:
         return f"Error: {str(e)}"
 
