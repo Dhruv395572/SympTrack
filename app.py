@@ -34,12 +34,12 @@ def chat():
     try:
         msg = request.form["msg"]
         print(msg)
-        # Prompt ko messages dict me convert karo
+        # List of BaseMessages pass karo
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": msg}
         ]
-        response = chatModel.invoke({"messages": messages})
+        response = chatModel.invoke(messages)
         # Agar response dict hai aur "content" key hai to wahi return karo
         if isinstance(response, dict) and "content" in response:
             return str(response["content"])
