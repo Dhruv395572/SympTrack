@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat - Chat Application</title>
+  <title>Chat UI</title>
   <style>
     * {
       margin: 0;
@@ -16,16 +16,17 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
+      background: #ece5dd; /* WhatsApp light bg */
     }
 
     /* Navbar */
     nav {
-      background: #222;
+      background: #075e54; /* WhatsApp green */
       color: white;
       padding: 15px;
       font-size: 20px;
       font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -52,7 +53,7 @@
     }
 
     .nav-link:hover {
-      color: #43a047;
+      color: #c8e6c9;
     }
 
     .nav-toggle {
@@ -66,13 +67,13 @@
     .chat-container {
       flex: 1;
       display: flex;
-      height: calc(100vh - 60px); /* Navbar ke liye space */
+      height: calc(100vh - 60px);
     }
 
     /* Left - User */
     .user-column {
       width: 30%;
-      background: #e0e0e0;
+      background: #fff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -88,7 +89,7 @@
     .user-input {
       display: flex;
       padding: 10px;
-      background: #d6d6d6;
+      background: #f0f0f0;
       border-top: 2px solid #ccc;
     }
 
@@ -96,89 +97,64 @@
       flex: 1;
       padding: 10px;
       border: 1px solid #bbb;
-      border-radius: 5px;
+      border-radius: 20px;
+      outline: none;
     }
 
     .user-input button {
       margin-left: 10px;
-      padding: 10px 15px;
+      padding: 10px 20px;
       border: none;
-      background: #222;
+      background: #075e54;
       color: white;
-      border-radius: 5px;
+      border-radius: 20px;
       cursor: pointer;
     }
 
     /* Right - Bot */
     .bot-column {
       width: 70%;
-      background: #000;
-      color: white;
+      background: #efeae2;
       padding: 15px;
       overflow-y: auto;
       display: flex;
-      align-items: flex-start; /* <-- Change here */
+      align-items: flex-start;
       justify-content: flex-start;
       flex-direction: column;
     }
 
     .message {
+      max-width: 70%;
       margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 10px 14px;
+      border-radius: 15px;
+      line-height: 1.4;
+      font-size: 15px;
+      word-wrap: break-word;
+      position: relative;
     }
 
+    /* User bubble (right side) */
     .user-message {
-      background: #2196f3;   /* Blue */
-      color: #fff;
+      background: #dcf8c6; /* WhatsApp green bubble */
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
     }
 
+    /* Bot bubble (left side) */
     .bot-message {
-      background: #43a047;   /* Green */
-      color: #fff;
+      background: #fff;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+      display: flex;
+      align-items: center;
     }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        right: 0;
-        background: #222;
-        width: 200px;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-      }
-
-      .nav-links.show {
-        display: flex;
-      }
-
-      .nav-toggle {
-        display: block;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .nav-links {
-        display: none;
-        flex-direction: column;
-        background: #222;
-        position: absolute;
-        top: 55px;
-        left: 0;
-        width: 100%;
-        z-index: 10;
-        padding-bottom: 10px;
-      }
-      .nav-links.show {
-        display: flex;
-      }
-      .nav-toggle {
-        display: block;
-      }
+    .bot-message img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      margin-right: 8px;
     }
 
     @media (max-width: 900px) {
@@ -190,7 +166,6 @@
         width: 100% !important;
         min-height: 180px;
         border-right: none;
-        border-top: 0px solid #ccc;
       }
       .bot-column {
         border-top: none;
@@ -206,8 +181,8 @@
     <div class="nav-brand">Chat Application</div>
     <div class="nav-links" id="navLinks">
       <a href="/home" class="nav-link">Home</a>
-    <a href="/" class="nav-link chat-active" style="color: #43a047;">Chat</a>
-    <a href="/about" class="nav-link">About</a>
+      <a href="/" class="nav-link" style="color: #c8e6c9;">Chat</a>
+      <a href="#" class="nav-link">About</a>
     </div>
     <div class="nav-toggle" onclick="toggleNav()">
       <span>&#9776;</span>
@@ -223,26 +198,27 @@
         <!-- User messages yaha aayenge -->
       </div>
       <div class="user-input">
-        <input type="text" id="userInput" placeholder="Ask me anything...">
+        <input type="text" id="userInput" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
       </div>
     </div>
 
     <!-- Right Column (Bot) -->
-    <div class="bot-column" id="botMessages" style="display: flex; align-items: flex-start; justify-content: flex-start; flex-direction: column;">
-      <div id="botWelcome" style="color:#ffffff48; margin:40px auto; text-align:center; font-size:1.2rem; width:100%;">
-        We are here for helping you
+    <div class="bot-column" id="botMessages" style="display: flex; flex-direction: column;">
+      <div id="botWelcome" style="color:#555; margin:40px auto; text-align:center; font-size:1.1rem; width:100%;">
+        👋 Welcome! Ask me anything...
       </div>
     </div>
 
   </div>
+
   <script>
   function sendMessage() {
     const input = document.getElementById("userInput");
     const userText = input.value.trim();
     if (userText === "") return;
 
-    // User message left side
+    // User message bubble
     const userDiv = document.createElement("div");
     userDiv.classList.add("message", "user-message");
     userDiv.textContent = userText;
@@ -254,11 +230,11 @@
     // Auto scroll
     userDiv.scrollIntoView();
 
-    // Remove welcome message on first user message
+    // Remove welcome text
     const botWelcome = document.getElementById("botWelcome");
     if (botWelcome) botWelcome.remove();
 
-    // Send POST request to backend
+    // Fake backend call
     const formData = new FormData();
     formData.append("msg", userText);
 
@@ -270,14 +246,20 @@
     .then(botResponse => {
       const botDiv = document.createElement("div");
       botDiv.classList.add("message", "bot-message");
-      botDiv.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="Doctor" style="width:24px;vertical-align:middle;margin-right:8px;border-radius:50%;">${botResponse}`;
+      botDiv.innerHTML = `
+        <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="Bot">
+        <span>${botResponse}</span>
+      `;
       document.getElementById("botMessages").appendChild(botDiv);
       botDiv.scrollIntoView();
     })
     .catch(() => {
       const botDiv = document.createElement("div");
       botDiv.classList.add("message", "bot-message");
-      botDiv.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="Doctor" style="width:24px;vertical-align:middle;margin-right:8px;border-radius:50%;">Sorry, bot is not responding.`;
+      botDiv.innerHTML = `
+        <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="Bot">
+        <span>❌ Bot is not responding.</span>
+      `;
       document.getElementById("botMessages").appendChild(botDiv);
       botDiv.scrollIntoView();
     });
@@ -287,6 +269,6 @@
     var navLinks = document.getElementById("navLinks");
     navLinks.classList.toggle("show");
   }
-</script>
+  </script>
 </body>
 </html>
