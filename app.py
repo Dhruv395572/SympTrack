@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 from dotenv import load_dotenv
 import os
 
@@ -8,7 +8,6 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 from langchain_groq import ChatGroq
-from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from src.prompt import system_prompt
 
@@ -17,7 +16,6 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", system_prompt),
     ("human", "{input}"),
 ])
-question_answer_chain = create_stuff_documents_chain(chatModel, prompt)
 
 @app.route("/")
 def index():
@@ -36,10 +34,8 @@ def chat():
     try:
         msg = request.form["msg"]
         print(msg)
-        response = question_answer_chain.invoke({"input": msg})
-        
-        if isinstance(response, dict) and "answer" in response:
-            return str(response["answer"])
+        # Direct Groq model se reply lo
+        response = chatModel.invoke(prompt.format(input=msg))
         return str(response)
     except Exception as e:
         return f"Error: {str(e)}"
