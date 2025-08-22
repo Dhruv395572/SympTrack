@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from src.helper import download_hugging_face_embeddings
-from langchain_pinecone import PineconeVectorStore
+# from langchain_pinecone import PineconeVectorStore
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
 from langchain.chains import create_retrieval_chain
