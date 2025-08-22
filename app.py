@@ -34,24 +34,26 @@ def about():
 
 @app.route("/get", methods=["GET", "POST"])
 def chat():
-    from langchain_openai import OpenAIEmbeddings
-    from langchain_pinecone import PineconeVectorStore
+    try:
+        from langchain_openai import OpenAIEmbeddings
+        from langchain_pinecone import PineconeVectorStore
 
-    embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-    index_name = "medical-chatbot"
-    docsearch = PineconeVectorStore.from_existing_index(
-        index_name=index_name,
-        embedding=embeddings
-    )
-    retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k":3})
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+        index_name = "medical-chatbot"
+        docsearch = PineconeVectorStore.from_existing_index(
+            index_name=index_name,
+            embedding=embeddings
+        )
+        retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k":3})
+        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-    msg = request.form["msg"]
-    input = msg
-    print(input)
-    response = rag_chain.invoke({"input": msg})
-    print("Response : ", response["answer"])
-    return str(response["answer"])
+        msg = request.form["msg"]
+        input = msg
+        print(input)
+        response = rag_chain.invoke({"input": msg})
+        return str(response["answer"])
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
