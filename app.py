@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 from dotenv import load_dotenv
@@ -9,10 +9,10 @@ import os
 app = Flask(__name__)
 load_dotenv()
 
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 
-# ✅ Use the correct Groq model name
-chatModel = ChatGroq(model="llama3-8b-8192", api_key=GROQ_API_KEY)
+# ✅ Use the correct Gemini model name
+chatModel = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
 
 # Prompt template (optional, if you want structured messages)
 prompt = ChatPromptTemplate.from_messages([
