@@ -12,7 +12,7 @@ load_dotenv()
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
 # ✅ Use the correct Groq model name
-chatModel = ChatGroq(model="llama3-70b-8192", api_key=GROQ_API_KEY)
+chatModel = ChatGroq(model="llama-3.3-70b-versatile", api_key=GROQ_API_KEY)
 
 # Prompt template (optional, if you want structured messages)
 prompt = ChatPromptTemplate.from_messages([
